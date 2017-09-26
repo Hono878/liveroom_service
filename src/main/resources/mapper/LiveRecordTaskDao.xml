@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.miner.pinecone.dao.LiveRecordTaskDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.miner.pinecone.entity.LiveRecordTaskEntity" id="liveRecordTaskMap">
+        <result property="recordId" column="record_id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="streamId" column="stream_id"/>
+        <result property="recordTime" column="record_time"/>
+        <result property="isOver" column="is_over"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.miner.pinecone.entity.LiveRecordTaskEntity">
+		select * from live_record_task where record_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.miner.pinecone.entity.LiveRecordTaskEntity">
+		select * from live_record_task
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${order} ${sidx}
+            </when>
+			<otherwise>
+                order by record_id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from live_record_task 
+	</select>
+	 
+	<insert id="save" parameterType="com.miner.pinecone.entity.LiveRecordTaskEntity" useGeneratedKeys="true" keyProperty="recordId">
+		insert into live_record_task
+		<set>
+			<if test="taskId != null">`task_id` = #{taskId}, </if>
+			<if test="streamId != null">`stream_id` = #{streamId}, </if>
+			<if test="recordTime != null">`record_time` = #{recordTime}, </if>
+			<if test="isOver != null">`is_over` = #{isOver}</if>
+		</set>
+	</insert>
+	 
+	<update id="update" parameterType="com.miner.pinecone.entity.LiveRecordTaskEntity">
+		update live_record_task 
+		<set>
+			<if test="taskId != null">`task_id` = #{taskId}, </if>
+			<if test="streamId != null">`stream_id` = #{streamId}, </if>
+			<if test="recordTime != null">`record_time` = #{recordTime}, </if>
+			<if test="isOver != null">`is_over` = #{isOver}</if>
+		</set>
+		where record_id = #{recordId}
+	</update>
+	
+	<delete id="delete">
+		delete from live_record_task where record_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from live_record_task where record_id in 
+		<foreach item="recordId" collection="array" open="(" separator="," close=")">
+			#{recordId}
+		</foreach>
+	</delete>
+
+</mapper>

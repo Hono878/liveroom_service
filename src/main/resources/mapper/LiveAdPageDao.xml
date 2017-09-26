@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.miner.pinecone.dao.LiveAdPageDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.miner.pinecone.entity.LiveAdPageEntity" id="liveAdPageMap">
+        <result property="h5AdPageId" column="h5_ad_page_id"/>
+        <result property="pageUrl" column="page_url"/>
+        <result property="eventId" column="event_id"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.miner.pinecone.entity.LiveAdPageEntity">
+		select * from live_ad_page where h5_ad_page_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.miner.pinecone.entity.LiveAdPageEntity">
+		select * from live_ad_page
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${order} ${sidx}
+            </when>
+			<otherwise>
+                order by h5_ad_page_id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from live_ad_page 
+	</select>
+	 
+	<insert id="save" parameterType="com.miner.pinecone.entity.LiveAdPageEntity" useGeneratedKeys="true" keyProperty="h5AdPageId">
+		insert into live_ad_page
+		<set>
+			<if test="pageUrl != null">`page_url` = #{pageUrl}, </if>
+			<if test="eventId != null">`event_id` = #{eventId}</if>
+		</set>
+	</insert>
+	 
+	<update id="update" parameterType="com.miner.pinecone.entity.LiveAdPageEntity">
+		update live_ad_page 
+		<set>
+			<if test="pageUrl != null">`page_url` = #{pageUrl}, </if>
+			<if test="eventId != null">`event_id` = #{eventId}</if>
+		</set>
+		where h5_ad_page_id = #{h5AdPageId}
+	</update>
+	
+	<delete id="delete">
+		delete from live_ad_page where h5_ad_page_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from live_ad_page where h5_ad_page_id in 
+		<foreach item="h5AdPageId" collection="array" open="(" separator="," close=")">
+			#{h5AdPageId}
+		</foreach>
+	</delete>
+
+</mapper>

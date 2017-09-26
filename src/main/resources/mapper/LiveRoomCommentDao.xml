@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.miner.pinecone.dao.LiveRoomCommentDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.miner.pinecone.entity.LiveRoomCommentEntity" id="liveRoomCommentMap">
+        <result property="liveRoomCommentId" column="live_room_comment_id"/>
+        <result property="liveRoomId" column="live_room_id"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="avatar" column="avatar"/>
+        <result property="comment" column="comment"/>
+        <result property="commentUp" column="comment_up"/>
+        <result property="commentTime" column="comment_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.miner.pinecone.entity.LiveRoomCommentEntity">
+		select * from live_room_comment where live_room_comment_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.miner.pinecone.entity.LiveRoomCommentEntity">
+		select * from live_room_comment
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${order} ${sidx}
+            </when>
+			<otherwise>
+                order by live_room_comment_id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from live_room_comment 
+	</select>
+	 
+	<insert id="save" parameterType="com.miner.pinecone.entity.LiveRoomCommentEntity">
+		insert into live_room_comment
+		<set>
+			<if test="liveRoomId != null">`live_room_id` = #{liveRoomId}, </if>
+			<if test="nickName != null">`nick_name` = #{nickName}, </if>
+			<if test="avatar != null">`avatar` = #{avatar}, </if>
+			<if test="comment != null">`comment` = #{comment}, </if>
+			<if test="commentUp != null">`comment_up` = #{commentUp}, </if>
+			<if test="commentTime != null">`comment_time` = #{commentTime}</if>
+		</set>
+	</insert>
+	 
+	<update id="update" parameterType="com.miner.pinecone.entity.LiveRoomCommentEntity">
+		update live_room_comment 
+		<set>
+			<if test="liveRoomId != null">`live_room_id` = #{liveRoomId}, </if>
+			<if test="nickName != null">`nick_name` = #{nickName}, </if>
+			<if test="avatar != null">`avatar` = #{avatar}, </if>
+			<if test="comment != null">`comment` = #{comment}, </if>
+			<if test="commentUp != null">`comment_up` = #{commentUp}, </if>
+			<if test="commentTime != null">`comment_time` = #{commentTime}</if>
+		</set>
+		where live_room_comment_id = #{liveRoomCommentId}
+	</update>
+	
+	<delete id="delete">
+		delete from live_room_comment where live_room_comment_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from live_room_comment where live_room_comment_id in 
+		<foreach item="liveRoomCommentId" collection="array" open="(" separator="," close=")">
+			#{liveRoomCommentId}
+		</foreach>
+	</delete>
+
+</mapper>

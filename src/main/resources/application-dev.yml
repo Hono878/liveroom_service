@@ -2,7 +2,7 @@ spring:
     datasource:
         type: com.alibaba.druid.pool.DruidDataSource
         driverClassName: com.mysql.jdbc.Driver
-        url:  jdbc:mysql://139.199.82.213/business_live?useUnicode=true&useSSL=false&characterEncoding=UTF8
+        url:  jdbc:mysql://139.199.82.213/pineconelive?useUnicode=true&useSSL=false&characterEncoding=UTF8
         #139.199.82.213
         #username: zpHtXGJY
         #password: hushangjie
